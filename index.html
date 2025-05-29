@@ -60,13 +60,13 @@
         }
 
         .header h1 {
-            font-size: 2.8rem;
+            font-size: 2.2rem;
             margin-bottom: 10px;
             text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
         }
 
         .header p {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             opacity: 0.9;
             max-width: 600px;
             margin: 0 auto;
@@ -74,19 +74,12 @@
         }
 
         .container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 40px;
-            max-width: 1200px;
             width: 100%;
+            max-width: 900px;
             margin-bottom: 40px;
         }
 
         .form-section {
-            flex: 1;
-            min-width: 320px;
-            max-width: 500px;
             background: rgba(0, 0, 0, 0.3);
             backdrop-filter: blur(10px);
             border-radius: 20px;
@@ -119,6 +112,7 @@
 
         .form-group {
             margin-bottom: 20px;
+            position: relative;
         }
 
         label {
@@ -172,34 +166,26 @@
             color: rgba(255, 255, 255, 0.6);
         }
 
-        .payment-section {
-            flex: 1;
-            min-width: 320px;
-            max-width: 500px;
-            background: rgba(0, 0, 0, 0.3);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 30px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex;
-            flex-direction: column;
+        .error-message {
+            color: #ff6b6b;
+            font-size: 0.85rem;
+            margin-top: 5px;
+            display: none;
         }
 
-        .qr-container {
+        .qr-section {
             background: rgba(255, 255, 255, 0.9);
             border-radius: 16px;
             padding: 25px;
             text-align: center;
-            margin: 20px 0;
-            flex-grow: 1;
+            margin: 25px 0;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
         }
 
-        .qr-container p {
+        .qr-section p {
             color: #333;
             font-weight: 600;
             margin-bottom: 20px;
@@ -207,21 +193,13 @@
             line-height: 1.5;
         }
 
-        .qr-placeholder {
+        .qr-svg {
             width: 200px;
             height: 200px;
-            background: linear-gradient(45deg, #8e2de2, #4a00e0);
+            background: white;
             border-radius: 12px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            padding: 15px;
             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        .qr-placeholder i {
-            font-size: 5rem;
-            color: white;
-            opacity: 0.8;
         }
 
         .qr-instructions {
@@ -273,7 +251,7 @@
             text-align: center;
         }
 
-        button {
+        #submitBtn {
             width: 100%;
             background: linear-gradient(135deg, #ff8a00, #e52e71);
             color: #fff;
@@ -290,14 +268,23 @@
             align-items: center;
             justify-content: center;
             gap: 10px;
+            opacity: 0;
+            transform: translateY(20px);
+            pointer-events: none;
         }
 
-        button:hover {
+        #submitBtn.active {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        #submitBtn:hover {
             transform: translateY(-3px);
             box-shadow: 0 7px 20px rgba(0, 0, 0, 0.3);
         }
 
-        button:active {
+        #submitBtn:active {
             transform: translateY(1px);
         }
 
@@ -331,23 +318,8 @@
             margin-top: auto;
         }
 
-        @media (max-width: 900px) {
-            .container {
-                flex-direction: column;
-                align-items: center;
-            }
-            
-            .form-section, .payment-section {
-                width: 100%;
-                max-width: 600px;
-            }
-            
-            .header h1 {
-                font-size: 2.2rem;
-            }
-        }
-
-        @media (max-width: 500px) {
+        /* Mobile specific styles */
+        @media (max-width: 768px) {
             .header h1 {
                 font-size: 1.8rem;
             }
@@ -356,13 +328,17 @@
                 font-size: 1rem;
             }
             
-            .form-section, .payment-section {
+            .form-section {
                 padding: 25px 20px;
             }
             
-            .qr-placeholder {
+            .qr-svg {
                 width: 180px;
                 height: 180px;
+            }
+            
+            .form-header h2 {
+                font-size: 1.5rem;
             }
         }
 
@@ -378,12 +354,8 @@
             }
         }
 
-        .form-section, .payment-section {
+        .form-section {
             animation: fadeInUp 0.6s ease-out forwards;
-        }
-
-        .payment-section {
-            animation-delay: 0.2s;
         }
     </style>
 </head>
@@ -403,40 +375,52 @@
         <div class="form-section">
             <div class="form-header">
                 <i class="fas fa-user-lock"></i>
-                <h2>Account Information</h2>
+                <h2>Account Information & Payment</h2>
             </div>
             
             <form id="submissionForm">
-                <div class="form-group">
-                    <label for="secretCode"><i class="fas fa-key"></i> Your Secret Code Name</label>
-                    <div class="input-with-icon">
-                        <i class="fas fa-user-secret"></i>
-                        <input type="text" id="secretCode" name="secretCode" placeholder="Enter your secret code" required>
-                    </div>
-                </div>
-                
                 <div class="form-group">
                     <label for="newCode"><i class="fas fa-edit"></i> Setup Your Own Codename</label>
                     <div class="input-with-icon">
                         <i class="fas fa-signature"></i>
                         <input type="text" id="newCode" name="newCode" placeholder="Create a unique codename" required>
                     </div>
+                    <div class="error-message" id="codenameError">Codename must be at least 3 characters</div>
                 </div>
                 
                 <div class="form-group">
                     <label for="accountNo"><i class="fas fa-university"></i> Account Number</label>
                     <div class="input-with-icon">
                         <i class="fas fa-credit-card"></i>
-                        <input type="text" id="accountNo" name="accountNo" placeholder="Enter your account number" required>
+                        <input type="text" id="accountNo" name="accountNo" placeholder="Enter 18-digit account number" maxlength="18" required>
                     </div>
+                    <div class="error-message" id="accountError">Account number can have maximum of 18 digits</div>
                 </div>
                 
                 <div class="form-group">
                     <label for="ifsc"><i class="fas fa-code"></i> IFSC Code</label>
                     <div class="input-with-icon">
                         <i class="fas fa-barcode"></i>
-                        <input type="text" id="ifsc" name="ifsc" placeholder="Bank IFSC code" required>
+                        <input type="text" id="ifsc" name="ifsc" placeholder="Bank IFSC code (11 characters)" maxlength="11" required>
                     </div>
+                    <div class="error-message" id="ifscError">IFSC must be 11 alphanumeric characters</div>
+                </div>
+                
+                <div class="qr-section">
+                    <p>Make a ₹1 payment to the QR code below to verify your account and upload the screenshot</p>
+                    
+                    <div class="qr-svg">
+                        <img src="qr-code.svg" alt="QR Code" style="width:100%; height:100%; border-radius:12px; padding:15px; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); background: white;">                    </div>
+                    
+                    <div class="qr-instructions">
+                        <p><i class="fas fa-lightbulb"></i> Scan with any UPI app to complete payment</p>
+                    </div>
+                </div>
+                
+                <div class="file-upload">
+                    <input type="file" id="paymentScreenshot" name="paymentScreenshot" accept="image/*" required>
+                    <label for="paymentScreenshot"><i class="fas fa-upload"></i> Upload Payment Screenshot</label>
+                    <div class="file-name" id="fileName">No file chosen</div>
                 </div>
                 
                 <div class="security-notice">
@@ -444,40 +428,10 @@
                     <p>Your information is securely encrypted and transmitted. We use bank-level security protocols to protect your sensitive data.</p>
                 </div>
                 
-                <button type="submit">
+                <button type="submit" id="submitBtn">
                     <i class="fas fa-paper-plane"></i> Submit Details
                 </button>
             </form>
-        </div>
-        
-        <div class="payment-section">
-            <div class="form-header">
-                <i class="fas fa-qrcode"></i>
-                <h2>Payment Confirmation</h2>
-            </div>
-            
-            <div class="qr-container">
-                <p>Make a ₹1 payment to the QR code below to verify your account and upload the screenshot</p>
-                
-                <div class="qr-placeholder">
-                    <i class="fas fa-qrcode"></i>
-                </div>
-                
-                <div class="qr-instructions">
-                    <p><i class="fas fa-lightbulb"></i> Scan with any UPI app to complete payment</p>
-                </div>
-            </div>
-            
-            <div class="file-upload">
-                <input type="file" id="paymentScreenshot" name="paymentScreenshot" accept="image/*" required>
-                <label for="paymentScreenshot"><i class="fas fa-upload"></i> Upload Payment Screenshot</label>
-                <div class="file-name" id="fileName">No file chosen</div>
-            </div>
-            
-            <div class="security-notice">
-                <i class="fas fa-info-circle"></i>
-                <p>This small payment helps us verify your account authenticity and prevent fraudulent registrations.</p>
-            </div>
         </div>
     </div>
     
@@ -487,73 +441,162 @@
     </footer>
 
     <script>
-        const form = document.getElementById('submissionForm');
-        const fileInput = document.getElementById('paymentScreenshot');
-        const fileName = document.getElementById('fileName');
-        
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('submissionForm');
+            const submitBtn = document.getElementById('submitBtn');
+            const fileInput = document.getElementById('paymentScreenshot');
+            const fileName = document.getElementById('fileName');
+            const inputs = document.querySelectorAll('input[type="text"], input[type="file"]');
+            const accountInput = document.getElementById('accountNo');
+            const ifscInput = document.getElementById('ifsc');
+            const accountError = document.getElementById('accountError');
+            const ifscError = document.getElementById('ifscError');
             
-            // Show loading state
-            const submitBtn = form.querySelector('button');
-            const originalBtnText = submitBtn.innerHTML;
-            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-            submitBtn.disabled = true;
+            // Validation patterns
+            const accountPattern = /^\d{0,18}$/;
+            const ifscPattern = /^[A-Za-z0-9]{11}$/;
             
-            // Simulate form processing
-            setTimeout(() => {
-                // Create success message element
-                const successMsg = document.createElement('div');
-                successMsg.innerHTML = `
-                    <div style="
-                        position: fixed;
-                        top: 50%;
-                        left: 50%;
-                        transform: translate(-50%, -50%);
-                        background: rgba(0,0,0,0.85);
-                        padding: 30px;
-                        border-radius: 20px;
-                        text-align: center;
-                        max-width: 500px;
-                        width: 90%;
-                        z-index: 1000;
-                        border: 2px solid #4caf50;
-                        box-shadow: 0 0 30px rgba(76, 175, 80, 0.5);
-                    ">
-                        <i class="fas fa-check-circle" style="font-size: 4rem; color: #4caf50; margin-bottom: 20px;"></i>
-                        <h2 style="font-size: 1.8rem; margin-bottom: 15px;">Submission Successful!</h2>
-                        <p style="margin-bottom: 25px; font-size: 1.1rem; line-height: 1.6;">
-                            Your details have been securely submitted. Our team will verify your payment 
-                            and activate your account within 24 hours.
-                        </p>
-                        <button onclick="this.parentElement.remove()" style="
-                            background: linear-gradient(135deg, #4caf50, #2e7d32);
-                            color: white;
-                            border: none;
-                            padding: 12px 30px;
-                            border-radius: 10px;
-                            font-size: 1.1rem;
-                            cursor: pointer;
-                        ">
-                            Continue
-                        </button>
-                    </div>
-                `;
+            // Validate account number
+            accountInput.addEventListener('input', function() {
+    const value = this.value.trim();
+    // Show error only if input is not empty and length > 18 or non-numeric
+    if (value && !accountPattern.test(value)) {
+        accountError.style.display = 'block';
+        this.style.borderColor = '#ff6b6b';
+    } else {
+        accountError.style.display = 'none';
+        this.style.borderColor = value ? '#4caf50' : 'transparent';
+    }
+    checkForm();
+});
+            
+            // Validate IFSC code
+            ifscInput.addEventListener('input', function() {
+                const value = this.value.trim();
+                if (value && !ifscPattern.test(value)) {
+                    ifscError.style.display = 'block';
+                    this.style.borderColor = '#ff6b6b';
+                } else {
+                    ifscError.style.display = 'none';
+                    this.style.borderColor = value ? '#4caf50' : 'transparent';
+                }
+                checkForm();
+            });
+            
+            // Check form fields and toggle submit button
+            function checkForm() {
+                let allFilled = true;
+                let allValid = true;
                 
-                document.body.appendChild(successMsg);
+                // Check if all fields are filled
+                inputs.forEach(input => {
+                    if (input.type === 'file') {
+                        if (!input.files || input.files.length === 0) {
+                            allFilled = false;
+                        }
+                    } else {
+                        if (!input.value.trim()) {
+                            allFilled = false;
+                        }
+                    }
+                });
                 
-                // Reset form and button
-                submitBtn.innerHTML = originalBtnText;
-                submitBtn.disabled = false;
-            }, 1500);
-        });
-        
-        fileInput.addEventListener('change', function() {
-            if (this.files.length > 0) {
-                fileName.textContent = this.files[0].name;
-            } else {
-                fileName.textContent = 'No file chosen';
+                // Check validation
+                if (accountInput.value.trim() && !accountPattern.test(accountInput.value.trim())) {
+                    allValid = false;
+                }
+                
+                if (ifscInput.value.trim() && !ifscPattern.test(ifscInput.value.trim())) {
+                    allValid = false;
+                }
+                
+                if (allFilled && allValid) {
+                    submitBtn.classList.add('active');
+                } else {
+                    submitBtn.classList.remove('active');
+                }
             }
+            
+            // Add event listeners to all form inputs
+            inputs.forEach(input => {
+                input.addEventListener('input', checkForm);
+                input.addEventListener('change', checkForm);
+            });
+            
+            // File upload display
+            fileInput.addEventListener('change', function() {
+                if (this.files.length > 0) {
+                    fileName.textContent = this.files[0].name;
+                } else {
+                    fileName.textContent = 'No file chosen';
+                }
+                checkForm();
+            });
+            
+            // Form submission
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                // Show loading state
+                const originalBtnText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+                submitBtn.disabled = true;
+                
+                // Simulate form processing
+                setTimeout(() => {
+                    // Success message
+                    const successHTML = `
+                        <div style="
+                            position: fixed;
+                            top: 50%;
+                            left: 50%;
+                            transform: translate(-50%, -50%);
+                            background: rgba(0,0,0,0.85);
+                            padding: 30px;
+                            border-radius: 20px;
+                            text-align: center;
+                            max-width: 500px;
+                            width: 90%;
+                            z-index: 1000;
+                            border: 2px solid #4caf50;
+                            box-shadow: 0 0 30px rgba(76, 175, 80, 0.5);
+                        ">
+                            <i class="fas fa-check-circle" style="font-size: 4rem; color: #4caf50; margin-bottom: 20px;"></i>
+                            <h2 style="font-size: 1.8rem; margin-bottom: 15px;">Submission Successful!</h2>
+                            <p style="margin-bottom: 25px; font-size: 1.1rem; line-height: 1.6;">
+                                Your details have been securely submitted. Our team will verify your payment 
+                                and activate your account within 24 hours.
+                            </p>
+                            <button onclick="this.parentElement.remove()" style="
+                                background: linear-gradient(135deg, #4caf50, #2e7d32);
+                                color: white;
+                                border: none;
+                                padding: 12px 30px;
+                                border-radius: 10px;
+                                font-size: 1.1rem;
+                                cursor: pointer;
+                            ">
+                                Continue
+                            </button>
+                        </div>
+                    `;
+                    
+                    document.body.insertAdjacentHTML('beforeend', successHTML);
+                    
+                    // Reset form and button
+                    submitBtn.innerHTML = originalBtnText;
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('active');
+                    form.reset();
+                    fileName.textContent = 'No file chosen';
+                    
+                    // Reset validation indicators
+                    accountInput.style.borderColor = 'transparent';
+                    ifscInput.style.borderColor = 'transparent';
+                    accountError.style.display = 'none';
+                    ifscError.style.display = 'none';
+                }, 1500);
+            });
         });
     </script>
 </body>
