@@ -357,6 +357,35 @@
         .form-section {
             animation: fadeInUp 0.6s ease-out forwards;
         }
+        
+        /* Debug panel */
+        .debug-panel {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.7);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            width: 300px;
+            z-index: 1000;
+        }
+        
+        .debug-panel h3 {
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .debug-panel pre {
+            background: rgba(255,255,255,0.1);
+            padding: 10px;
+            border-radius: 5px;
+            font-size: 12px;
+            max-height: 150px;
+            overflow: auto;
+        }
     </style>
 </head>
 <body>
@@ -378,12 +407,14 @@
                 <h2>Account Information & Payment</h2>
             </div>
             
-            <form id="submissionForm">
+            <!-- CHANGE 1: Add method, action and enctype to form -->
+            <form id="submissionForm" method="POST" action="YOUR_GOOGLE_SCRIPT_URL" enctype="multipart/form-data">
                 <div class="form-group">
                     <label for="newCode"><i class="fas fa-edit"></i> Setup Your Own Codename</label>
                     <div class="input-with-icon">
                         <i class="fas fa-signature"></i>
-                        <input type="text" id="newCode" name="newCode" placeholder="Create a unique codename" required>
+                        <!-- CHANGE 2: Ensure name attribute matches Google Script expectation -->
+                        <input type="text" id="newCode" name="codename" placeholder="Create a unique codename" required>
                     </div>
                     <div class="error-message" id="codenameError">Codename must be at least 3 characters</div>
                 </div>
@@ -392,7 +423,8 @@
                     <label for="accountNo"><i class="fas fa-university"></i> Account Number</label>
                     <div class="input-with-icon">
                         <i class="fas fa-credit-card"></i>
-                        <input type="text" id="accountNo" name="accountNo" placeholder="Enter 18-digit account number" maxlength="18" required>
+                        <!-- CHANGE 3: Update name attribute -->
+                        <input type="text" id="accountNo" name="account" placeholder="Enter 18-digit account number" maxlength="18" required>
                     </div>
                     <div class="error-message" id="accountError">Account number can have maximum of 18 digits</div>
                 </div>
@@ -401,6 +433,7 @@
                     <label for="ifsc"><i class="fas fa-code"></i> IFSC Code</label>
                     <div class="input-with-icon">
                         <i class="fas fa-barcode"></i>
+                        <!-- CHANGE 4: Update name attribute -->
                         <input type="text" id="ifsc" name="ifsc" placeholder="Bank IFSC code (11 characters)" maxlength="11" required>
                     </div>
                     <div class="error-message" id="ifscError">IFSC must be 11 alphanumeric characters</div>
@@ -410,7 +443,8 @@
                     <p>Make a ₹1 payment to the QR code below to verify your account and upload the screenshot</p>
                     
                     <div class="qr-svg">
-                        <img src="qr-code.svg" alt="QR Code" style="width:100%; height:100%; border-radius:12px; padding:15px; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); background: white;">                    </div>
+                        <img src="qr-image.svg" alt="QR Code" style="width:100%; height:100%; border-radius:12px; padding:15px; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2); background: white;">
+                    </div>
                     
                     <div class="qr-instructions">
                         <p><i class="fas fa-lightbulb"></i> Scan with any UPI app to complete payment</p>
@@ -418,7 +452,8 @@
                 </div>
                 
                 <div class="file-upload">
-                    <input type="file" id="paymentScreenshot" name="paymentScreenshot" accept="image/*" required>
+                    <!-- CHANGE 5: Add name attribute to file input -->
+                    <input type="file" id="paymentScreenshot" name="screenshot" accept="image/*" required>
                     <label for="paymentScreenshot"><i class="fas fa-upload"></i> Upload Payment Screenshot</label>
                     <div class="file-name" id="fileName">No file chosen</div>
                 </div>
@@ -439,6 +474,14 @@
         <p>&copy; 2025 Probability Earners. All rights reserved. | Secured with 256-bit SSL encryption</p>
         <p>Contact: support@probabilityearners.com | Help Center</p>
     </footer>
+    
+    <!-- Debug Panel for Development -->
+    <div class="debug-panel">
+        <h3><i class="fas fa-bug"></i> Debug Information</h3>
+        <p><strong>Form Status:</strong> <span id="debugStatus">Ready</span></p>
+        <p><strong>File Status:</strong> <span id="fileStatus">No file selected</span></p>
+        <pre id="formDataPreview">Form data will appear here</pre>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -451,6 +494,9 @@
             const ifscInput = document.getElementById('ifsc');
             const accountError = document.getElementById('accountError');
             const ifscError = document.getElementById('ifscError');
+            const debugStatus = document.getElementById('debugStatus');
+            const fileStatus = document.getElementById('fileStatus');
+            const formDataPreview = document.getElementById('formDataPreview');
             
             // Validation patterns
             const accountPattern = /^\d{0,18}$/;
@@ -458,17 +504,17 @@
             
             // Validate account number
             accountInput.addEventListener('input', function() {
-    const value = this.value.trim();
-    // Show error only if input is not empty and length > 18 or non-numeric
-    if (value && !accountPattern.test(value)) {
-        accountError.style.display = 'block';
-        this.style.borderColor = '#ff6b6b';
-    } else {
-        accountError.style.display = 'none';
-        this.style.borderColor = value ? '#4caf50' : 'transparent';
-    }
-    checkForm();
-});
+                const value = this.value.trim();
+                if (value && !accountPattern.test(value)) {
+                    accountError.style.display = 'block';
+                    this.style.borderColor = '#ff6b6b';
+                } else {
+                    accountError.style.display = 'none';
+                    this.style.borderColor = value ? '#4caf50' : 'transparent';
+                }
+                checkForm();
+                updateFormPreview();
+            });
             
             // Validate IFSC code
             ifscInput.addEventListener('input', function() {
@@ -481,6 +527,7 @@
                     this.style.borderColor = value ? '#4caf50' : 'transparent';
                 }
                 checkForm();
+                updateFormPreview();
             });
             
             // Check form fields and toggle submit button
@@ -512,90 +559,91 @@
                 
                 if (allFilled && allValid) {
                     submitBtn.classList.add('active');
+                    debugStatus.textContent = "Form is valid and ready to submit";
                 } else {
                     submitBtn.classList.remove('active');
+                    debugStatus.textContent = "Form is incomplete or invalid";
                 }
             }
             
             // Add event listeners to all form inputs
             inputs.forEach(input => {
-                input.addEventListener('input', checkForm);
-                input.addEventListener('change', checkForm);
+                input.addEventListener('input', function() {
+                    checkForm();
+                    updateFormPreview();
+                });
+                input.addEventListener('change', function() {
+                    checkForm();
+                    updateFormPreview();
+                });
             });
             
             // File upload display
             fileInput.addEventListener('change', function() {
                 if (this.files.length > 0) {
                     fileName.textContent = this.files[0].name;
+                    fileStatus.textContent = "File selected: " + this.files[0].name;
                 } else {
                     fileName.textContent = 'No file chosen';
+                    fileStatus.textContent = "No file selected";
                 }
                 checkForm();
+                updateFormPreview();
             });
             
-            // Form submission
+            // Form preview for debugging
+            function updateFormPreview() {
+                const formData = {
+                    codename: document.getElementById('newCode').value,
+                    account: document.getElementById('accountNo').value,
+                    ifsc: document.getElementById('ifsc').value,
+                    screenshot: fileInput.files.length ? fileInput.files[0].name : 'No file'
+                };
+                
+                formDataPreview.textContent = JSON.stringify(formData, null, 2);
+            }
+            
+            // Initialize form preview
+            updateFormPreview();
+            
+            // Form submission handling
             form.addEventListener('submit', function(e) {
-                e.preventDefault();
+                // Client-side validation
+                const codename = document.getElementById('newCode').value.trim();
+                const account = accountInput.value.trim();
+                const ifsc = ifscInput.value.trim();
+                
+                if (!codename || codename.length < 3) {
+                    e.preventDefault();
+                    alert('Codename must be at least 3 characters');
+                    return;
+                }
+                
+                if (!accountPattern.test(account) || account.length !== 18) {
+                    e.preventDefault();
+                    alert('Account number must be exactly 18 digits');
+                    return;
+                }
+                
+                if (!ifscPattern.test(ifsc)) {
+                    e.preventDefault();
+                    alert('IFSC must be exactly 11 alphanumeric characters');
+                    return;
+                }
+                
+                if (!fileInput.files || fileInput.files.length === 0) {
+                    e.preventDefault();
+                    alert('Please upload a payment screenshot');
+                    return;
+                }
                 
                 // Show loading state
                 const originalBtnText = submitBtn.innerHTML;
                 submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
                 submitBtn.disabled = true;
+                debugStatus.textContent = "Submitting form...";
                 
-                // Simulate form processing
-                setTimeout(() => {
-                    // Success message
-                    const successHTML = `
-                        <div style="
-                            position: fixed;
-                            top: 50%;
-                            left: 50%;
-                            transform: translate(-50%, -50%);
-                            background: rgba(0,0,0,0.85);
-                            padding: 30px;
-                            border-radius: 20px;
-                            text-align: center;
-                            max-width: 500px;
-                            width: 90%;
-                            z-index: 1000;
-                            border: 2px solid #4caf50;
-                            box-shadow: 0 0 30px rgba(76, 175, 80, 0.5);
-                        ">
-                            <i class="fas fa-check-circle" style="font-size: 4rem; color: #4caf50; margin-bottom: 20px;"></i>
-                            <h2 style="font-size: 1.8rem; margin-bottom: 15px;">Submission Successful!</h2>
-                            <p style="margin-bottom: 25px; font-size: 1.1rem; line-height: 1.6;">
-                                Your details have been securely submitted. Our team will verify your payment 
-                                and activate your account within 24 hours.
-                            </p>
-                            <button onclick="this.parentElement.remove()" style="
-                                background: linear-gradient(135deg, #4caf50, #2e7d32);
-                                color: white;
-                                border: none;
-                                padding: 12px 30px;
-                                border-radius: 10px;
-                                font-size: 1.1rem;
-                                cursor: pointer;
-                            ">
-                                Continue
-                            </button>
-                        </div>
-                    `;
-                    
-                    document.body.insertAdjacentHTML('beforeend', successHTML);
-                    
-                    // Reset form and button
-                    submitBtn.innerHTML = originalBtnText;
-                    submitBtn.disabled = false;
-                    submitBtn.classList.remove('active');
-                    form.reset();
-                    fileName.textContent = 'No file chosen';
-                    
-                    // Reset validation indicators
-                    accountInput.style.borderColor = 'transparent';
-                    ifscInput.style.borderColor = 'transparent';
-                    accountError.style.display = 'none';
-                    ifscError.style.display = 'none';
-                }, 1500);
+                // Continue with default form submission to Google Script
             });
         });
     </script>
