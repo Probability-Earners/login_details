@@ -619,9 +619,9 @@
                     return;
                 }
                 
-                if (!accountPattern.test(account) || account.length !== 18) {
+                if (!accountPattern.test(account) || account.length > 18) {
                     e.preventDefault();
-                    alert('Account number must be exactly 18 digits');
+                    alert('Account number can have maximum 18 digits');
                     return;
                 }
                 
