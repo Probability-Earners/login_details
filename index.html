@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Probability Earners Registration</title>
+
+  <!-- Font Awesome (already in use) -->
+  <link
+    rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    crossorigin="anonymous"
+  />
+
+  <!-- Your existing CSS -->
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- QRCode.js library (latest v1.0.0) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1><i class="fas fa-coins"></i> Probability Earners</h1>
+    <h2>Road to 10 Lacs - Registration</h2>
+
+    <form id="registrationForm" novalidate>
+      <!-- Codename -->
+      <div class="form-group">
+        <label for="codename"><i class="fas fa-user-secret"></i> Codename</label>
+        <input type="text" id="codename" name="codename" maxlength="30" required />
+        <small class="error-msg"></small>
+      </div>
+
+      <!-- Account Number -->
+      <div class="form-group">
+        <label for="accountNumber"><i class="fas fa-hashtag"></i> Account Number</label>
+        <input type="text" id="accountNumber" name="accountNumber" maxlength="18" required />
+        <small class="error-msg"></small>
+      </div>
+
+      <!-- IFSC Code -->
+      <div class="form-group">
+        <label for="ifscCode"><i class="fas fa-code-branch"></i> IFSC Code</label>
+        <input type="text" id="ifscCode" name="ifscCode" maxlength="11" required />
+        <small class="error-msg"></small>
+      </div>
+
+      <!-- Account Person -->
+      <div class="form-group">
+        <label for="accountPerson"><i class="fas fa-user"></i> Account Person</label>
+        <input type="text" id="accountPerson" name="accountPerson" maxlength="50" required />
+        <small class="error-msg"></small>
+      </div>
+
+      <!-- QR Code placeholder -->
+      <div class="qr-container">
+        <div id="qrcode"></div>
+      </div>
+
+      <!-- Payment Screenshot -->
+      <div class="form-group">
+        <label><i class="fas fa-file-image"></i> Payment Screenshot</label>
+        <label for="paymentScreenshot" class="file-label">
+          <i class="fas fa-upload"></i> Choose File
+        </label>
+        <input type="file" id="paymentScreenshot" name="paymentScreenshot" accept="image/*" required />
+        <small class="error-msg"></small>
+      </div>
+
+      <p id="countdown" style="text-align: center; font-weight: bold; color: #e53935; margin-top: 0.5rem;"></p>
+
+      <!-- Submit button (hidden until valid) -->
+      <button type="submit" id="submitBtn" class="btn" style="display:none;">
+        <i class="fas fa-paper-plane"></i> Submit
+      </button>
+    </form>
+  </div>
+
+  <!-- Your existing JS (with QR code generation added) -->
+  <script src="script.js"></script>
+</body>
+</html>

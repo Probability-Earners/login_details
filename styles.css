@@ -1,0 +1,158 @@
+/* Reset & Base */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(135deg, #e6f4ea, #f9fdf7);
+  color: #333;
+}
+.container {
+  max-width: 500px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 8px 20px rgba(0, 128, 0, 0.1);
+  animation: fadeIn 1s ease;
+}
+
+/* Headings */
+h1 {
+  text-align: center;
+  margin-bottom: 0.5rem;
+  font-size: 2rem;
+  color: #2e7d32;
+}
+h1 i {
+  color: #388e3c;
+  margin-right: 0.5rem;
+}
+h2 {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-size: 1.3rem;
+  color: #4e944f;
+}
+
+/* Form */
+form {
+  display: flex;
+  flex-direction: column;
+}
+.form-group {
+  margin-bottom: 1rem;
+}
+label {
+  font-weight: 600;
+  margin-bottom: 0.4rem;
+  display: flex;
+  align-items: center;
+  color: #4e944f;
+}
+label i {
+  margin-right: 0.5rem;
+}
+input[type="text"] {
+  width: 100%;
+  padding: 0.7rem;
+  font-size: 1rem;
+  border: 1px solid #a5d6a7;
+  border-radius: 6px;
+  transition: box-shadow 0.3s;
+}
+input[type="text"]:focus {
+  box-shadow: 0 0 8px rgba(76, 175, 80, 0.5);
+}
+input.error {
+  border-color: #e53935;
+}
+small.error-msg {
+  color: #e53935;
+  font-size: 0.85rem;
+  margin-top: 0.2rem;
+  display: block;
+}
+
+/* Custom File Input */
+input[type="file"] {
+  display: none;
+}
+.file-label {
+  display: inline-block;
+  width: 100%;
+  padding: 0.7rem;
+  font-size: 1rem;
+  text-align: center;
+  background-color: #66bb6a;
+  color: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.file-label:hover {
+  background-color: #57a05c;
+}
+
+/* QR Container */
+.qr-container {
+  text-align: center;
+  margin: 1rem 0;
+}
+/* Ensure QR fits a 200×200 box */
+#qrcode {
+  width: 200px;
+  height: 200px;
+  margin: 0 auto;
+}
+
+/* Submit Button */
+.btn {
+  width: 100%;
+  padding: 0.9rem;
+  font-size: 1rem;
+  background-color: #43a047;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+.btn:hover {
+  background-color: #388e3c;
+}
+.btn i {
+  margin-right: 0.4rem;
+}
+
+/* Responsive */
+@media (max-width: 520px) {
+  .container {
+    margin: 1rem;
+    padding: 1.2rem;
+  }
+  h1 {
+    font-size: 1.6rem;
+  }
+  h2 {
+    font-size: 1.1rem;
+  }
+  #qrcode {
+    width: 150px;
+    height: 150px;
+  }
+}
+
+/* Fade‐in Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
